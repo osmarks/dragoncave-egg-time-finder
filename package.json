@@ -1,0 +1,15 @@
+{
+  "name": "dragcave-eggtime",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "parcel src/index.js",
+    "build": "parcel build src/index.js"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "parcel": "^1.10.3"
+  },
+  "dependencies": {
+    "hyperapp": "^1.2.9"
+  }
+}
