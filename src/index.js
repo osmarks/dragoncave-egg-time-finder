@@ -114,11 +114,11 @@ const toLocaleString = x => x.toLocaleString()
 
 const view = (state, actions) => (<div>
         <div className="code">Code: {code}</div>
-        <div className="hours">Time: {hoursRemaining}h remaining</div>
-        <div className="hours last">Time was: {formatNull(state.lastHours)}h</div>
+        <div className="hours">Life: {hoursRemaining}h remaining</div>
+        <div className="hours last">Life was: {formatNull(state.lastHours)}h</div>
         <button className="refresh" onclick={actions.toggleRefresh}>{state.refresh ? "Disable Refreshing" : "Enable Refreshing"}</button>
         <div className="time change">Changed between: {formatNull(state.changeStartTime, toLocaleString)} and {formatNull(state.changeStartTime, toLocaleString)}</div>
-        <button className="clear" onclick={actions.clearTimeChange}>Clear Time Change</button>
+        <button className="clear" onclick={actions.clearTimeChange}>Clear Change Time</button>
     </div>)
 
 const mountingEl = document.getElementById("eggtime") || document.createElement("div")
