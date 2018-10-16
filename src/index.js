@@ -53,7 +53,7 @@ function load(name, defaultval) {
         console.log("Loaded", data)
         return data
     } catch(e) {
-        console.log("Failed to parse storaged data!")
+        console.log("Failed to parse stored data!")
         return defaultval
     }
 }
@@ -61,7 +61,6 @@ function load(name, defaultval) {
 function save(name, val) {
     localStorage[name] = JSON.stringify(val)
 }
-
 
 const state = {
     refresh: false,
@@ -122,15 +121,17 @@ const view = (state, actions) => (<div>
         <button className="clear" onclick={actions.clearTimeChange}>Clear Change Time</button>
     </div>)
 
-const mountingEl = document.getElementById("eggtime") || document.createElement("div")
-mountingEl.id = "eggtime"
-document.body.appendChild(mountingEl)
-const main = app(state, actions, view, mountingEl)
+if (hoursRemaining > 0) { // don't run on grown dragons
+    const mountingEl = document.getElementById("eggtime") || document.createElement("div")
+    mountingEl.id = "eggtime"
+    document.body.appendChild(mountingEl)
+    const main = app(state, actions, view, mountingEl)
 
-main.load()
-main.detectTimeChange()
-window.onbeforeunload = main.save
+    main.load()
+    main.detectTimeChange()
+    window.onbeforeunload = main.save
 
-console.log("DC Egg Time Finder running.")
+    console.log("DC Egg Time Finder running.")
 
-main.refreshIfEnabled()
+    main.refreshIfEnabled()
+}
