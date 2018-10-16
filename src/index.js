@@ -1,4 +1,5 @@
 import { app, h } from "hyperapp"
+import dayjs from "dayjs"
 
 const css = `
 #eggtime {
@@ -109,15 +110,15 @@ const actions = {
     }
 }
 
-const formatNull = (x, f) => (x === null || x === undefined) ? "N/A" : (f !== undefined ? f(x) : x)
-const toLocaleString = x => x.toLocaleString()
+const formatNull = (x, f) => (x === null || x === undefined) ? "[unknown]" : (f !== undefined ? f(x) : x)
+const formatDate = date => dayjs(date).format("HH:mm:ss")
 
 const view = (state, actions) => (<div>
         <div className="code">Code: {code}</div>
         <div className="hours">Life: {hoursRemaining}h remaining</div>
         <div className="hours last">Life was: {formatNull(state.lastHours)}h</div>
         <button className="refresh" onclick={actions.toggleRefresh}>{state.refresh ? "Disable Refreshing" : "Enable Refreshing"}</button>
-        <div className="time change">Changed between: {formatNull(state.changeStartTime, toLocaleString)} and {formatNull(state.changeStartTime, toLocaleString)}</div>
+        <div className="time change">Changed between: {formatNull(state.changeStartTime, formatDate)} and {formatNull(state.changeEndTime, formatDate)}</div>
         <button className="clear" onclick={actions.clearTimeChange}>Clear Change Time</button>
     </div>)
 
@@ -130,6 +131,6 @@ main.load()
 main.detectTimeChange()
 window.onbeforeunload = main.save
 
-console.log("DC Egg Time running.")
+console.log("DC Egg Time Finder running.")
 
 main.refreshIfEnabled()
