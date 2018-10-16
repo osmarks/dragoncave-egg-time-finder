@@ -2,7 +2,7 @@
 
   "manifest_version": 2,
   "name": "DragonCave Egg Time Finder",
-  "version": "1.3",
+  "version": "1.4",
   "description": "Very very slowly figures out the time of death of eggs. Or hatchlings.",
 
   "icons": {
