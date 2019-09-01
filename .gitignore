@@ -1,5 +1,7 @@
 node_modules
 .cache
-dist/index.js
-dist/index.map
+dist/web-ext-artifacts
+dist/.web-extension-id
+dist/index*
 web-ext-artifacts
+.web-extension-id

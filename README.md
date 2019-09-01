@@ -10,3 +10,5 @@ It does this by refreshing every 2 seconds for (at most) an hour. There is not a
 3. Wait a while.
 4. Eventually `Changed between` will show the times between which the egg could have changed time. Use this for whatever.
 5. Click `Disable refreshing`.
+
+Please make sure to *manually* check that the time is right before actually using it for anything important.

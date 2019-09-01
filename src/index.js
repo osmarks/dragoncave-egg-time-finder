@@ -1,5 +1,5 @@
 import { app, h } from "hyperapp"
-import dayjs from "dayjs"
+import { format, differenceInSeconds, subSeconds, addHours, getTime } from "date-fns"
 
 const css = `
 #eggtime {
@@ -9,6 +9,17 @@ const css = `
     background: white;
     color: black;
     padding: 0.5em;
+}
+
+#eggtime .warning {
+    color: red;
+}
+
+#eggtime .button {
+    cursor: pointer;
+    border: 1px solid black;
+    padding: 0.2em;
+    margin: 0.1em;
 }
 `
 
@@ -65,8 +76,10 @@ function save(name, val) {
 const state = {
     refresh: false,
     lastHours: null,
-    changeStartTime: null,
-    changeEndTime: null
+    firstPossibleChangeTime: null,
+    lastPossibleChangeTime: null,
+    minimized: false,
+    hoursAfterChange: null
 }
 
 const actions = {
@@ -96,30 +109,54 @@ const actions = {
     detectTimeChange: () => state => {
         if (state.lastHours !== null && state.lastHours !== hoursRemaining) {
             return {
-                changeStartTime: state.lastTime,
-                changeEndTime: new Date()
+                firstPossibleChangeTime: state.lastTime,
+                lastPossibleChangeTime: new Date(),
+                hoursAfterChange: hoursRemaining
             }
         }
     },
-    clearTimeChange: () => state => {
-        return {
-            changeStartTime: null,
-            changeEndTime: null
-        }
-    }
+    clearTimeChange: () => state => ({
+        firstPossibleChangeTime: null,
+        lastPossibleChangeTime: null,
+        hoursAfterChange: null
+    }),
+    hide: () => state => ({ minimized: true }),
+    show: () => state => ({ minimized: false })
 }
 
 const formatNull = (x, f) => (x === null || x === undefined) ? "[unknown]" : (f !== undefined ? f(x) : x)
-const formatDate = date => dayjs(date).format("HH:mm:ss")
+const formatDate = date => format(date, "HH:mm:ss DD/MM/YY")
+const warn = lines => <p className="warning">{lines.map(x => <p>{x}</p>)}</p> 
+const midpoint = (d1, d2) => new Date((getTime(d1) + getTime(d2)) / 2)
 
-const view = (state, actions) => (<div>
+const view = (state, actions) => {
+    if (state.minimized) {
+        console.log("DCETF minimized.")
+        return <div className="show button" onclick={actions.show}>Show</div>
+    }
+
+    const firstChange = state.firstPossibleChangeTime
+    const lastChange = state.lastPossibleChangeTime
+    const changeRecorded = firstChange && lastChange
+    return (<div>
         <div className="code">Code: {code}</div>
         <div className="hours">Life: {hoursRemaining}h remaining</div>
         <div className="hours last">Life was: {formatNull(state.lastHours)}h</div>
-        <button className="refresh" onclick={actions.toggleRefresh}>{state.refresh ? "Disable Refreshing" : "Enable Refreshing"}</button>
-        <div className="time change">Changed between: {formatNull(state.changeStartTime, formatDate)} and {formatNull(state.changeEndTime, formatDate)}</div>
-        <button className="clear" onclick={actions.clearTimeChange}>Clear Change Time</button>
+
+        <button className="refresh button" onclick={actions.toggleRefresh}>{state.refresh ? "Disable Refreshing" : "Enable Refreshing"}</button>
+
+        <div className="time change">Changed between: {formatNull(firstChange, formatDate)} and {formatNull(lastChange, formatDate)}</div>
+
+        {changeRecorded && <div className="time death">Approx ToD: {formatDate(addHours(midpoint(lastChange, firstChange), state.hoursAfterChange))}</div>}
+
+        {changeRecorded && differenceInSeconds(lastChange, firstChange) > 15 && warn(["This is inaccurate - time interval too large.", "Use the autorefresh mode."])}
+
+        <button className="clear button" onclick={actions.clearTimeChange}>Clear Change Time</button>
+
+        <br />
+        <button className="hide button" onclick={actions.hide}>Hide</button>
     </div>)
+}
 
 if (hoursRemaining > 0) { // don't run on grown dragons
     const mountingEl = document.getElementById("eggtime") || document.createElement("div")
